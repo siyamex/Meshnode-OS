@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {# Auto-refresh on step 4 until the mesh IP is assigned #}
+    {% if refreshing is defined and refreshing %}
+    <meta http-equiv="refresh" content="4">
+    {% endif %}
+    <title>meshnode — Setup Wizard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="logo">meshnode</div>
+        <div class="subtitle">First-boot setup wizard</div>
+        <nav class="steps">
+            <span class="step {% if step == 1 %}active{% elif step > 1 %}done{% endif %}">1&nbsp;Hostname</span>
+            <span class="divider">›</span>
+            <span class="step {% if step == 2 %}active{% elif step > 2 %}done{% endif %}">2&nbsp;Interface</span>
+            <span class="divider">›</span>
+            <span class="step {% if step == 3 %}active{% elif step > 3 %}done{% endif %}">3&nbsp;Mesh</span>
+            <span class="divider">›</span>
+            <span class="step {% if step == 4 %}active{% elif step > 4 %}done{% endif %}">4&nbsp;IP</span>
+            <span class="divider">›</span>
+            <span class="step {% if step == 5 %}active{% elif step > 5 %}done{% endif %}">5&nbsp;Cluster</span>
+            <span class="divider">›</span>
+            <span class="step {% if step == 6 %}active{% endif %}">6&nbsp;Done</span>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</div>
+</body>
+</html>

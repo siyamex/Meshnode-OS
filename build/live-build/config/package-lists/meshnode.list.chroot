@@ -1,0 +1,25 @@
+# meshnode.list.chroot — packages installed into the live system chroot.
+#
+# Phase 0: minimal base. Docker and ZeroTier are installed via hooks in
+# config/hooks/ so each phase stays auditable.
+#
+# Format: one package name per line; blank lines and # comments are ignored.
+
+# Network tools
+curl
+ca-certificates
+net-tools
+iproute2
+
+# GPG — required by Phase 1 hooks to import Docker and ZeroTier apt keys
+gnupg
+
+# Remote access (useful for testing via SSH from the host)
+openssh-server
+
+# Privilege escalation
+sudo
+
+# Basic editors / diagnostics
+vim
+htop

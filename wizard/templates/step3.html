@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Step 3 — Join ZeroTier mesh</h2>
+<p class="hint">
+    ZeroTier connects your nodes securely across any network — even different ISPs —
+    without touching your router or firewall.<br><br>
+    <strong>Don't have a ZeroTier account?</strong>
+    Create a free one at <strong>my.zerotier.com</strong>, click
+    <em>Create A Network</em>, and copy the 16-character Network ID it shows you.
+</p>
+
+{% if error %}
+<div class="error">{{ error }}</div>
+{% endif %}
+
+<form method="post" action="/step/3">
+    <div class="field">
+        <label for="network_id">ZeroTier Network ID</label>
+        <input type="text" id="network_id" name="network_id"
+               placeholder="8056c2e21c000001"
+               autocomplete="off"
+               spellcheck="false"
+               maxlength="16"
+               pattern="[0-9a-fA-F]{16}"
+               required>
+        <p class="form-note">
+            16 hexadecimal characters — found on the Settings tab of your ZeroTier network.<br>
+            After clicking Join, go to <strong>my.zerotier.com → your network → Members</strong>
+            and tick the checkbox next to this node to authorise it.
+        </p>
+    </div>
+    <button type="submit" class="btn">Join network →</button>
+</form>
+{% endblock %}

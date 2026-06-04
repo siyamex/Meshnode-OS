@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Step 5 — Join existing cluster</h2>
+<p class="hint">
+    Paste the join code from the manager node's done screen below.
+    The code encodes the Swarm token and the manager's mesh IP — it's safe
+    to copy over chat, email, or any channel you trust.
+</p>
+
+{% if error %}
+<div class="error">{{ error }}</div>
+{% endif %}
+
+<form method="post" action="/cluster/join">
+    <div class="field">
+        <label for="join_code">Join code</label>
+        <textarea id="join_code" name="join_code"
+                  rows="3"
+                  placeholder="eyJ0b2tlbiI6..."
+                  autocomplete="off"
+                  spellcheck="false"
+                  required></textarea>
+        <p class="form-note">
+            Copy the full code from the manager node's setup wizard — step 6,
+            "Join code" box.
+        </p>
+    </div>
+    <button type="submit" class="btn">Join cluster →</button>
+</form>
+
+<p class="back-link"><a href="/step/5">← Back to cluster choice</a></p>
+{% endblock %}

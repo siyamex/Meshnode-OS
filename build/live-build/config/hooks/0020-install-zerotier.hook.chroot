@@ -1,0 +1,39 @@
+#!/bin/bash
+# 0020-install-zerotier.hook.chroot
+#
+# Adds the ZeroTier apt repository and installs the zerotier-one package.
+# After install the service is enabled but NOT joined to any network —
+# the first-boot wizard (Phase 2) does the join.
+#
+# This script is idempotent: safe to run twice.
+
+set -euo pipefail
+
+echo ">> [Phase 1] Installing ZeroTier..."
+
+# --- 1. Add ZeroTier's GPG key ---
+# ZeroTier publishes their signing key on their CDN. We save it alongside
+# the Docker key in /usr/share/keyrings/.
+install -m 0755 -d /usr/share/keyrings
+curl -fsSL https://raw.githubusercontent.com/zerotier/ZeroTierOne/master/doc/contact%40zerotier.com.gpg \
+    | gpg --dearmor -o /usr/share/keyrings/zerotierone-archive-keyring.gpg
+chmod a+r /usr/share/keyrings/zerotierone-archive-keyring.gpg
+
+# --- 2. Add the ZeroTier apt repository ---
+# ZeroTier maintains a dedicated Debian Bookworm repo.
+echo \
+  "deb [arch=amd64 signed-by=/usr/share/keyrings/zerotierone-archive-keyring.gpg] \
+  https://download.zerotier.com/debian/bookworm bookworm main" \
+  > /etc/apt/sources.list.d/zerotier.list
+
+# --- 3. Install ZeroTier ---
+apt-get update -qq
+DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends zerotier-one
+
+# --- 4. Enable the ZeroTier service ---
+# Like Docker, we only enable (create the boot symlink) — joining a network
+# requires a network ID, which is supplied later in the wizard.
+systemctl enable zerotier-one.service || true
+
+echo ">> [Phase 1] ZeroTier installed successfully."
+echo "   Version: $(zerotier-one -v 2>/dev/null || zerotier-cli -v 2>/dev/null || echo 'binary present')"

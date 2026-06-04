@@ -1,0 +1,33 @@
+[Unit]
+Description=meshnode first-boot setup wizard
+Documentation=file:///opt/meshnode-wizard/README
+After=network-online.target zerotier-one.service
+Wants=network-online.target
+# Skip this service entirely if the wizard has already completed.
+# The wizard writes this file after cluster formation (Phase 3).
+ConditionPathExists=!/etc/meshnode/.firstboot-done
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/meshnode-wizard
+# Run the FastAPI app via uvicorn on all interfaces, port 8088.
+ExecStart=/opt/meshnode-wizard/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8088
+# 2 seconds after the server starts, print the wizard URL to the physical
+# console (TTY1) so users see it without needing a monitor attached to a
+# specific port. The '|| true' ensures a failure here never kills the service.
+ExecStartPost=/bin/sh -c '\
+    sleep 2; \
+    IP=$(hostname -I | awk "{print \$1}"); \
+    printf "\n\033[1;36m  meshnode setup wizard is running\033[0m\n  Open in browser: \033[1mhttp://%s:8088\033[0m\n\n" "$IP" \
+    >/dev/tty1 2>/dev/null || true'
+# Restart automatically if uvicorn crashes (e.g. import error on first run).
+Restart=on-failure
+RestartSec=5s
+# Must run as root: calls hostnamectl, zerotier-cli, writes /etc/meshnode/
+User=root
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=meshnode-wizard
+
+[Install]
+WantedBy=multi-user.target

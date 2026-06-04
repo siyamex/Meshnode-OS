@@ -1,0 +1,56 @@
+#!/bin/bash
+# 0010-install-docker.hook.chroot
+#
+# Runs inside the live-build chroot after debootstrap + package installation.
+# Adds the official Docker CE apt repository and installs Docker CE.
+#
+# Why a hook instead of the package list?
+# Docker is not in the Debian repos — it must come from Docker's own apt repo.
+# Hooks are the live-build mechanism for "add a 3rd-party repo, then install."
+#
+# This script is idempotent: safe to run twice.
+
+set -euo pipefail
+
+echo ">> [Phase 1] Installing Docker CE..."
+
+# --- 1. Add Docker's official GPG key ---
+# The key authenticates packages from download.docker.com.
+# We save it in /usr/share/keyrings/ (the modern Debian convention for
+# repo-specific keys, as opposed to the legacy apt-key).
+install -m 0755 -d /usr/share/keyrings
+curl -fsSL https://download.docker.com/linux/debian/gpg \
+    | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+chmod a+r /usr/share/keyrings/docker-archive-keyring.gpg
+
+# --- 2. Add the Docker stable apt repository ---
+# 'signed-by' ties this repo to the key we just saved so apt won't accept
+# packages from this repo signed with any other key.
+echo \
+  "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] \
+  https://download.docker.com/linux/debian bookworm stable" \
+  > /etc/apt/sources.list.d/docker.list
+
+# --- 3. Install Docker CE ---
+apt-get update -qq
+DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    docker-ce \
+    docker-ce-cli \
+    containerd.io \
+    docker-buildx-plugin \
+    docker-compose-plugin
+
+# --- 4. Add the default live-image user to the docker group ---
+# This lets the 'user' account run docker commands without sudo.
+# The 'user' account is created by live-build; || true guards if it doesn't
+# exist yet at hook time (it will exist at runtime).
+usermod -aG docker user 2>/dev/null || true
+
+# --- 5. Enable the Docker service ---
+# 'systemctl enable' creates the /etc/systemd/system symlink that tells
+# systemd to start docker.service at boot. The daemon is not started NOW
+# (we're in a chroot), only enabled for first boot.
+systemctl enable docker.service || true
+
+echo ">> [Phase 1] Docker CE installed successfully."
+echo "   Version: $(docker --version)"

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Step 2 — Choose network interface</h2>
+<p class="hint">
+    Select the network interface this node uses to reach the internet.
+    ZeroTier will use this interface to establish the mesh tunnel.
+    If you're unsure, pick the first listed option — it's usually correct.
+</p>
+
+{% if error %}
+<div class="error">{{ error }}</div>
+{% endif %}
+
+<form method="post" action="/step/2">
+    <div class="field">
+        <label for="interface">Network interface</label>
+        <select id="interface" name="interface" required>
+            {% for iface in interfaces %}
+            <option value="{{ iface }}" {% if iface == saved %}selected{% endif %}>{{ iface }}</option>
+            {% endfor %}
+        </select>
+        {% if not interfaces %}
+        <p class="form-note" style="color:#f87171">
+            No interfaces detected. Make sure the network cable is plugged in
+            and try reloading this page.
+        </p>
+        {% endif %}
+    </div>
+    <button type="submit" class="btn" {% if not interfaces %}disabled{% endif %}>Continue →</button>
+</form>
+{% endblock %}

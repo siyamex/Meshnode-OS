@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+{% if role == "manager" %}
+{# ── Manager: show the join code for worker nodes ──────────────────────────── #}
+<div class="success-icon">🎉</div>
+<h2>Cluster created!</h2>
+<p class="hint">
+    <strong>{{ hostname }}</strong> is now the Swarm manager.
+    Copy the join code below and paste it into the setup wizard on each
+    additional node (Step 5 → Join existing cluster).
+</p>
+
+<div class="field">
+    <label>Join code — paste this on every other node</label>
+    <textarea class="join-code-box" readonly
+              onclick="this.select()">{{ join_code }}</textarea>
+    <p class="form-note">Click the box to select all, then copy.</p>
+</div>
+
+<div class="status-box">
+    <div class="label">Manager mesh IP</div>
+    <div class="value">{{ mesh_ip }}</div>
+</div>
+<div class="status-box">
+    <div class="label">Overlay network</div>
+    <div class="value">meshnet (created)</div>
+</div>
+
+<p class="hint next-hint">
+    <strong>What's next?</strong><br>
+    Phase 4 will auto-deploy <strong>Portainer</strong> (web GUI) and
+    <strong>Traefik</strong> (edge router) to the Swarm. Run
+    <code>make iso</code> and boot the updated image, or proceed directly
+    to Phase 4 if you are building incrementally.
+</p>
+
+{% else %}
+{# ── Worker: joined successfully ──────────────────────────────────────────── #}
+<div class="success-icon">✅</div>
+<h2>Joined the cluster!</h2>
+<p class="hint">
+    <strong>{{ hostname }}</strong> is now a Swarm worker.
+    Run <code>docker node ls</code> on the manager node to confirm it appears
+    as <strong>Ready</strong>.
+</p>
+
+<div class="status-box">
+    <div class="label">This node</div>
+    <div class="value">{{ hostname }}</div>
+</div>
+<div class="status-box">
+    <div class="label">Mesh IP</div>
+    <div class="value">{{ mesh_ip }}</div>
+</div>
+<div class="status-box">
+    <div class="label">Role</div>
+    <div class="value">worker</div>
+</div>
+
+<p class="hint next-hint">
+    <strong>What's next?</strong><br>
+    Go back to the manager node's Portainer GUI to see this node listed
+    in the cluster. Services deployed on the Swarm will be scheduled here
+    automatically.
+</p>
+{% endif %}
+{% endblock %}

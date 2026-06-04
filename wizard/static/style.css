@@ -1,0 +1,339 @@
+/* meshnode setup wizard — minimal dark-theme CSS, no framework */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: #0f172a;
+    color: #e2e8f0;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2.5rem 1rem;
+}
+
+.container { width: 100%; max-width: 560px; }
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+
+header { text-align: center; margin-bottom: 2rem; }
+
+.logo {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #38bdf8;
+    letter-spacing: -1px;
+}
+
+.subtitle {
+    color: #64748b;
+    font-size: 0.875rem;
+    margin-top: 0.2rem;
+}
+
+/* ── Step progress bar ─────────────────────────────────────────────────── */
+
+.steps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 1.5rem;
+    font-size: 0.78rem;
+    flex-wrap: wrap;
+}
+
+.step {
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    background: #1e293b;
+    color: #475569;
+    border: 1px solid #334155;
+    white-space: nowrap;
+}
+
+.step.active {
+    background: #075985;
+    color: #e0f2fe;
+    border-color: #0369a1;
+    font-weight: 600;
+}
+
+.step.done {
+    background: #0c4a6e;
+    color: #7dd3fc;
+    border-color: #0369a1;
+}
+
+.divider { color: #334155; font-size: 1rem; }
+
+/* ── Main card ──────────────────────────────────────────────────────────── */
+
+main {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: 2rem;
+}
+
+h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 0.6rem;
+}
+
+.hint {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+code {
+    font-family: "Fira Code", "Cascadia Code", monospace;
+    background: #0f172a;
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    font-size: 0.85em;
+    color: #7dd3fc;
+}
+
+/* ── Form fields ─────────────────────────────────────────────────────────── */
+
+.field { margin-bottom: 1.25rem; }
+
+label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #cbd5e1;
+    margin-bottom: 0.45rem;
+}
+
+input[type="text"],
+select {
+    width: 100%;
+    padding: 0.6rem 0.875rem;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: #f1f5f9;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+input[type="text"]:focus,
+select:focus { border-color: #38bdf8; }
+
+select option { background: #1e293b; }
+
+.form-note {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-top: 0.45rem;
+    line-height: 1.5;
+}
+
+/* ── Button ──────────────────────────────────────────────────────────────── */
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    background: #0369a1;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1.25rem;
+    transition: background 0.15s;
+    text-align: center;
+}
+
+.btn:hover:not([disabled]) { background: #0284c7; }
+.btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+.btn--top { margin-top: 1.5rem; }
+
+/* ── Error banner ────────────────────────────────────────────────────────── */
+
+.error {
+    background: #450a0a;
+    border: 1px solid #991b1b;
+    border-radius: 8px;
+    color: #fca5a5;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+}
+
+/* ── Status boxes (step 4) ───────────────────────────────────────────────── */
+
+.status-box {
+    background: #0f172a;
+    border: 1px solid #1e3a5f;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    margin: 0.75rem 0;
+    font-family: "Fira Code", "Cascadia Code", monospace;
+}
+
+.status-box .label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #475569;
+    margin-bottom: 0.2rem;
+    font-family: system-ui, sans-serif;
+}
+
+.status-box .value {
+    font-size: 0.95rem;
+    color: #e2e8f0;
+    word-break: break-all;
+}
+
+/* ── Big mesh IP display ─────────────────────────────────────────────────── */
+
+.ip-big {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #38bdf8;
+    font-family: "Fira Code", "Cascadia Code", monospace;
+    text-align: center;
+    padding: 1rem;
+    background: #0f172a;
+    border: 2px solid #0369a1;
+    border-radius: 10px;
+    margin: 1.25rem 0;
+    letter-spacing: 0.02em;
+}
+
+/* ── Success icon ────────────────────────────────────────────────────────── */
+
+.success-icon {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 0.75rem;
+    line-height: 1;
+}
+
+/* ── Waiting / spinner (step 4, no IP yet) ───────────────────────────────── */
+
+.waiting {
+    text-align: center;
+    color: #64748b;
+    padding: 1.25rem 0;
+    font-size: 0.9rem;
+}
+
+.spinner {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid #334155;
+    border-top-color: #38bdf8;
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+    margin-bottom: 0.75rem;
+    will-change: transform;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Cluster choice cards (step 5) ──────────────────────────────────────────── */
+
+.choice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.25rem;
+}
+
+@media (max-width: 480px) {
+    .choice-grid { grid-template-columns: 1fr; }
+}
+
+.choice-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    padding: 1.25rem 1rem;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    text-align: left;
+    width: 100%;
+    font-family: inherit;
+}
+
+.choice-btn:hover {
+    border-color: #38bdf8;
+    background: #0c1f38;
+}
+
+.choice-icon { font-size: 1.75rem; line-height: 1; }
+
+.choice-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #f1f5f9;
+}
+
+.choice-desc {
+    font-size: 0.8rem;
+    color: #64748b;
+    line-height: 1.45;
+}
+
+/* ── Textarea (step 5 join + step 6 join code) ───────────────────────────── */
+
+textarea {
+    width: 100%;
+    padding: 0.6rem 0.875rem;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    color: #f1f5f9;
+    font-size: 0.875rem;
+    font-family: "Fira Code", "Cascadia Code", monospace;
+    outline: none;
+    resize: vertical;
+    transition: border-color 0.15s;
+}
+
+textarea:focus { border-color: #38bdf8; }
+
+.join-code-box {
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    cursor: text;
+    resize: none;
+    height: 4.5rem;
+}
+
+/* ── Back link (step 5 join) ─────────────────────────────────────────────── */
+
+.back-link {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.back-link a { color: #38bdf8; text-decoration: none; }
+.back-link a:hover { text-decoration: underline; }
+
+/* ── Next-steps hint (step 6) ────────────────────────────────────────────── */
+
+.next-hint { margin-top: 1.5rem; }

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Step 1 — Set hostname</h2>
+<p class="hint">
+    Give this node a unique name on your network.<br>
+    Use lowercase letters, numbers, and hyphens only (e.g.&nbsp;<code>node-1</code>, <code>server-office</code>).
+    Each node in your cluster must have a different hostname.
+</p>
+
+{% if error %}
+<div class="error">{{ error }}</div>
+{% endif %}
+
+<form method="post" action="/step/1">
+    <div class="field">
+        <label for="hostname">Hostname</label>
+        <input type="text" id="hostname" name="hostname"
+               value="{{ current_hostname }}"
+               placeholder="node-1"
+               autocomplete="off"
+               spellcheck="false"
+               required>
+        <p class="form-note">Current system value: <code>{{ current_hostname }}</code></p>
+    </div>
+    <button type="submit" class="btn">Continue →</button>
+</form>
+{% endblock %}

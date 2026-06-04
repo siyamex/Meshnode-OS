@@ -1,0 +1,20 @@
+# Built ISO files
+*.iso
+
+# live-build generated directories (large, not version-controlled)
+# The Makefile recreates these from source before each build.
+build/live-build/binary/
+build/live-build/cache/
+build/live-build/chroot/
+build/live-build/.build/
+
+# The wizard app is synced here by 'make iso' from the canonical wizard/ dir.
+# Do not track this copy — wizard/ is the source of truth.
+build/live-build/config/includes.chroot/opt/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/

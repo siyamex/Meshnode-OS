@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+{% if mesh_ip %}
+{# ── IP assigned: show it and offer to continue ───────────────────────────── #}
+<div class="success-icon">✅</div>
+<h2>Mesh IP assigned!</h2>
+<p class="hint">
+    This node is connected to the ZeroTier network. Your mesh IP is shown below.
+    Click <strong>Continue</strong> to set up the cluster.
+</p>
+
+<div class="ip-big">{{ mesh_ip }}</div>
+
+<div class="status-box">
+    <div class="label">Hostname</div>
+    <div class="value">{{ hostname }}</div>
+</div>
+<div class="status-box">
+    <div class="label">ZeroTier network</div>
+    <div class="value">{{ network_id }}</div>
+</div>
+<div class="status-box">
+    <div class="label">Status</div>
+    <div class="value">{{ zt_status }}</div>
+</div>
+
+{# POST /step/4/confirm saves the mesh_ip to config and redirects to step 5 #}
+<form method="post" action="/step/4/confirm">
+    <button type="submit" class="btn btn--top">Continue to cluster setup →</button>
+</form>
+
+{% else %}
+{# ── Waiting: not yet authorised on ZeroTier ─────────────────────────────── #}
+<h2>Waiting for mesh IP…</h2>
+<p class="hint">
+    This node has sent a join request to ZeroTier network
+    <strong>{{ network_id }}</strong>.<br><br>
+    If this is your first time joining, go to
+    <strong>my.zerotier.com → Networks → {{ network_id }} → Members</strong>
+    and tick the checkbox next to this node's address to authorise it.<br><br>
+    This page refreshes automatically every 4 seconds.
+</p>
+
+<div class="waiting">
+    <div class="spinner"></div>
+    <p>ZeroTier status: <strong>{{ zt_status if zt_status else "connecting…" }}</strong></p>
+</div>
+
+<div class="status-box">
+    <div class="label">Hostname</div>
+    <div class="value">{{ hostname }}</div>
+</div>
+<div class="status-box">
+    <div class="label">ZeroTier network</div>
+    <div class="value">{{ network_id }}</div>
+</div>
+{% endif %}
+{% endblock %}

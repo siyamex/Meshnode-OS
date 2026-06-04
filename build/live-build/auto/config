@@ -1,0 +1,26 @@
+#!/bin/sh
+# auto/config — live-build auto-configuration script.
+#
+# live-build calls this script automatically when you run `lb config` or
+# `lb build` inside the build/live-build/ directory.
+#
+# This script calls `lb config noauto` with all our project-specific flags.
+# The `noauto` argument prevents infinite recursion (it tells lb not to
+# re-invoke auto/config).
+#
+# After this runs, live-build writes its config files into config/. Any files
+# we've already placed in config/ (package-lists, hooks, includes.chroot) are
+# NOT overwritten — live-build only fills in the defaults it owns.
+
+set -e
+
+lb config noauto \
+    --architectures     amd64        \
+    --distribution      bookworm     \
+    --binary-images     iso-hybrid   \
+    --bootloaders       "syslinux grub-efi" \
+    --debian-installer  false        \
+    --apt-indices       false        \
+    --apt-recommends    false        \
+    --memtest           none         \
+    "${@}"

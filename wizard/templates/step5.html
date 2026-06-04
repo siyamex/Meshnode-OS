@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Step 5 — Set up cluster</h2>
+<p class="hint">
+    How is this node joining the cluster?<br>
+    Choose <strong>Create</strong> if this is the first node you're setting up.
+    Choose <strong>Join</strong> if a manager node already exists and you have
+    its join code.
+</p>
+
+{% if error %}
+<div class="error">{{ error }}</div>
+{% endif %}
+
+{% if mesh_ip %}
+<div class="status-box">
+    <div class="label">This node's mesh IP (used as advertise address)</div>
+    <div class="value">{{ mesh_ip }}</div>
+</div>
+{% endif %}
+
+<div class="choice-grid">
+    <form method="post" action="/cluster/create">
+        <button type="submit" class="choice-btn">
+            <span class="choice-icon">🖧</span>
+            <span class="choice-title">Create new cluster</span>
+            <span class="choice-desc">
+                Initialise Docker Swarm on this node. A join code will be
+                shown so other nodes can join.
+            </span>
+        </button>
+    </form>
+
+    <a href="/step/5/join" class="choice-btn">
+        <span class="choice-icon">🔗</span>
+        <span class="choice-title">Join existing cluster</span>
+        <span class="choice-desc">
+            Connect this node to a cluster that's already running.
+            You'll need the join code from the manager node.
+        </span>
+    </a>
+</div>
+{% endblock %}

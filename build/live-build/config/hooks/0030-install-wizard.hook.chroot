@@ -1,0 +1,55 @@
+#!/bin/bash
+# 0030-install-wizard.hook.chroot
+#
+# Installs Python 3 + pip, creates a venv, installs the wizard's Python
+# dependencies, installs the systemd unit, and enables the service.
+#
+# The wizard source itself is already on disk at /opt/meshnode-wizard/
+# because the Makefile copies wizard/ into config/includes.chroot/opt/meshnode-wizard/
+# before running lb build, and live-build copies includes.chroot/ verbatim
+# into the chroot root.
+#
+# This script is idempotent: safe to run twice.
+
+set -euo pipefail
+
+WIZARD_DIR="/opt/meshnode-wizard"
+VENV_DIR="${WIZARD_DIR}/venv"
+
+echo ">> [Phase 2] Installing meshnode wizard Python dependencies..."
+
+# --- 1. Install Python 3 and venv support ---
+apt-get update -qq
+DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    python3 \
+    python3-pip \
+    python3-venv
+
+# --- 2. Create a virtual environment ---
+# A venv isolates the wizard's dependencies from the system Python, preventing
+# conflicts with any packages a user installs later.
+if [ ! -d "${VENV_DIR}" ]; then
+    python3 -m venv "${VENV_DIR}"
+fi
+
+# --- 3. Install Python dependencies from requirements.txt ---
+# --no-cache-dir keeps the image smaller by not caching downloaded wheels.
+"${VENV_DIR}/bin/pip" install --no-cache-dir --upgrade pip
+"${VENV_DIR}/bin/pip" install --no-cache-dir -r "${WIZARD_DIR}/requirements.txt"
+
+# --- 4. Install the systemd unit ---
+# The service file is stored alongside the app in /opt/meshnode-wizard/.
+# We link it into /etc/systemd/system/ where systemd picks it up.
+install -m 644 "${WIZARD_DIR}/meshnode-wizard.service" /etc/systemd/system/meshnode-wizard.service
+
+# --- 5. Enable the wizard service ---
+# systemctl enable creates the multi-user.target.wants symlink so the wizard
+# starts on every boot until /etc/meshnode/.firstboot-done exists.
+systemctl enable meshnode-wizard.service || true
+
+# --- 6. Create /etc/meshnode/ config directory ---
+# The wizard reads/writes config here; pre-creating it with correct permissions
+# avoids a race condition on first boot.
+install -m 755 -d /etc/meshnode
+
+echo ">> [Phase 2] Wizard installed and enabled."

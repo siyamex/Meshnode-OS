@@ -1,0 +1,10 @@
+# Force LF line endings for all files in this repo.
+# The build scripts (shell hooks, auto/config, Makefile) run on Linux/WSL2
+# and will break with Windows CRLF endings.
+* text=auto eol=lf
+
+# Treat these explicitly as binary so git never touches their line endings.
+*.iso binary
+*.gpg binary
+*.png binary
+*.jpg binary

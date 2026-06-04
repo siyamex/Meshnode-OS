@@ -1,0 +1,8 @@
+
+  meshnode OS v0.1
+  ─────────────────────────────────────────────
+  Setup wizard:  http://\4{eth0}:8088
+  (if \4{eth0} is blank, try \4{ens3} or \4{enp1s0})
+  ─────────────────────────────────────────────
+  Login:  user / live   (or root, no password)
+
