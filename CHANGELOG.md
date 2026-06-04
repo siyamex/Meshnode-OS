@@ -5,6 +5,31 @@ Format: `## [version] — YYYY-MM-DD` with sections Added / Changed / Fixed.
 
 ---
 
+## [0.1.0-phase4] — 2026-06-04
+
+### Added
+- `stack/portainer.yml` — Portainer CE + agent Swarm stack. Agent runs globally
+  (one per node), server runs on the manager; GUI on port 9000.
+- `stack/traefik.yml` — Traefik v3 Swarm stack. Runs globally (one per node)
+  on ports 80/443/8080; uses Docker Swarm mode for service discovery via labels;
+  requires the `meshnet` external overlay (created in Phase 3).
+- `wizard/app/meshnode.py`: `deploy_stack()` and `get_stack_services()` helpers.
+  `STACKS_DIR = /opt/meshnode-stacks` path constant.
+
+### Changed
+- `wizard/app/main.py`: `POST /cluster/create` now deploys the portainer and
+  traefik stacks after swarm init. Deploy errors are non-fatal — saved to config
+  and shown in the UI so stacks can be redeployed manually.
+- `wizard/templates/step6.html`: manager done-screen now shows clickable
+  Portainer and Traefik dashboard URLs, deploy error warnings, and properly
+  associated `<label for>` + `title` on the join-code textarea.
+- `wizard/static/style.css`: added `.url-card`, `.url-card__label`,
+  `.url-card__link`, `.url-card__note`, `.field--top`.
+- `Makefile`: `make iso` now rsyncs `stack/` into
+  `config/includes.chroot/opt/meshnode-stacks/` so stacks are baked into the image.
+
+---
+
 ## [0.1.0-phase3] — 2026-06-04
 
 ### Added

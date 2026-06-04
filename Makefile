@@ -24,6 +24,10 @@ iso:
 	# if you rename or remove wizard files between builds.
 	mkdir -p $(LB_DIR)/config/includes.chroot/opt/meshnode-wizard
 	rsync -a --delete wizard/ $(LB_DIR)/config/includes.chroot/opt/meshnode-wizard/
+	# Sync the Swarm stack YAMLs into /opt/meshnode-stacks/ on the live image.
+	# The wizard deploys these stacks during cluster creation (Phase 4).
+	mkdir -p $(LB_DIR)/config/includes.chroot/opt/meshnode-stacks
+	rsync -a --delete stack/ $(LB_DIR)/config/includes.chroot/opt/meshnode-stacks/
 	# Wipe any previous partial build so lb build starts clean.
 	# '|| true' prevents failure when there is nothing to clean yet.
 	cd $(LB_DIR) && sudo lb clean 2>/dev/null || true

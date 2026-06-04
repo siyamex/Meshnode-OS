@@ -1,0 +1,65 @@
+# stack/traefik.yml — Traefik v3 edge router for Docker Swarm
+#
+# Deploy with:  docker stack deploy --compose-file traefik.yml traefik
+#
+# Runs in GLOBAL mode (one Traefik per node) so every node can accept
+# inbound HTTP/HTTPS traffic and route it to healthy service replicas.
+#
+# Service discovery: Traefik watches Docker Swarm service labels.
+# A service opts in by setting:
+#   traefik.enable=true
+#   traefik.http.routers.<name>.rule=Host(`example.com`)
+#   traefik.http.services.<name>.loadbalancer.server.port=<port>
+#
+# Ports:
+#   80   — HTTP
+#   443  — HTTPS (TLS termination added in Phase 7)
+#   8080 — Traefik dashboard (insecure; lock this down before going public)
+#
+# Prerequisites: the 'meshnet' overlay network must exist.
+# The wizard creates it automatically during cluster formation (Phase 3).
+
+services:
+  traefik:
+    image: traefik:v3
+    command:
+      # Use Docker provider in Swarm mode.
+      # Every node's Docker socket exposes the Swarm API so service labels
+      # are visible cluster-wide.
+      - --providers.docker=true
+      - --providers.docker.swarmMode=true
+      - --providers.docker.exposedByDefault=false
+      - --providers.docker.network=meshnet
+
+      # Entry points
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+
+      # Dashboard (insecure, dev-only — disable before exposing to internet)
+      - --api.dashboard=true
+      - --api.insecure=true
+
+      - --log.level=INFO
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"   # Traefik dashboard
+    volumes:
+      # Read-only mount: Traefik reads service labels but never writes to Docker
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - meshnet
+    deploy:
+      mode: global                        # one Traefik per node for HA
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+networks:
+  meshnet:
+    external: true                        # created by the wizard (Phase 3)

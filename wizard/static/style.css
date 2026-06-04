@@ -159,6 +159,7 @@ select option { background: #1e293b; }
 .btn:hover:not([disabled]) { background: #0284c7; }
 .btn[disabled] { opacity: 0.45; cursor: not-allowed; }
 .btn--top { margin-top: 1.5rem; }
+.field--top { margin-top: 1.5rem; }
 
 /* ── Error banner ────────────────────────────────────────────────────────── */
 
@@ -333,6 +334,43 @@ textarea:focus { border-color: #38bdf8; }
 
 .back-link a { color: #38bdf8; text-decoration: none; }
 .back-link a:hover { text-decoration: underline; }
+
+/* ── Service URL cards (step 6) ──────────────────────────────────────────── */
+
+.url-card {
+    background: #0f172a;
+    border: 1px solid #1e3a5f;
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+    margin: 0.75rem 0;
+}
+
+.url-card__label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #475569;
+    margin-bottom: 0.3rem;
+}
+
+.url-card__link {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #38bdf8;
+    font-family: "Fira Code", "Cascadia Code", monospace;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.url-card__link:hover { text-decoration: underline; }
+
+.url-card__note {
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-top: 0.35rem;
+    line-height: 1.45;
+}
 
 /* ── Next-steps hint (step 6) ────────────────────────────────────────────── */
 

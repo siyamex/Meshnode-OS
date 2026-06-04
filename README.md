@@ -28,7 +28,8 @@ make test         # boot it in QEMU
 | 0 | Repo scaffold + minimal bootable ISO | ✅ Done |
 | 1 | Bake in Docker + ZeroTier | ✅ Done |
 | 2 | First-boot wizard | ✅ Done |
-| 3 | Cluster formation | ✅ In progress |
+| 3 | Cluster formation | ✅ Done |
+| 4 | Auto-deploy Portainer + Traefik | ✅ In progress |
 | 3 | Cluster formation | Pending |
 | 4 | Auto-deploy Portainer + Traefik | Pending |
 | 5 | Sample app + failover proof | Pending |

@@ -32,11 +32,14 @@ from fastapi.templating import Jinja2Templates
 
 from meshnode import (
     FIRSTBOOT_DONE,
+    STACKS_DIR,
+    deploy_stack,
     docker_create_overlay_network,
     docker_get_worker_token,
     docker_swarm_init,
     docker_swarm_join,
     generate_join_code,
+    get_stack_services,
     list_interfaces,
     mark_firstboot_done,
     parse_join_code,
@@ -243,8 +246,18 @@ async def cluster_create(request: Request):
     worker_token = docker_get_worker_token()
     join_code = generate_join_code(worker_token, mesh_ip) if worker_token else ""
 
-    config["cluster_role"] = "manager"
-    config["join_code"] = join_code
+    # Deploy Portainer and Traefik; collect any errors but don't block the
+    # wizard — stacks can be redeployed manually if a pull fails.
+    deploy_errors: list[str] = []
+    for stack_name, filename in [("portainer", "portainer.yml"),
+                                  ("traefik",   "traefik.yml")]:
+        ok, msg = deploy_stack(stack_name, STACKS_DIR / filename)
+        if not ok:
+            deploy_errors.append(f"{stack_name}: {msg}")
+
+    config["cluster_role"]   = "manager"
+    config["join_code"]      = join_code
+    config["deploy_errors"]  = deploy_errors
     write_config(config)
 
     mark_firstboot_done()
@@ -287,12 +300,16 @@ async def cluster_join(request: Request, join_code: str = Form(...)):
 @app.get("/step/6", response_class=HTMLResponse)
 async def step6_get(request: Request):
     config = read_config()
+    mesh_ip = config.get("mesh_ip", "")
     return templates.TemplateResponse("step6.html", {
         "request": request, "step": 6,
-        "role":      config.get("cluster_role", ""),
-        "join_code": config.get("join_code", ""),
-        "hostname":  config.get("hostname", ""),
-        "mesh_ip":   config.get("mesh_ip", ""),
+        "role":             config.get("cluster_role", ""),
+        "join_code":        config.get("join_code", ""),
+        "hostname":         config.get("hostname", ""),
+        "mesh_ip":          mesh_ip,
+        "portainer_url":    f"http://{mesh_ip}:9000" if mesh_ip else "",
+        "traefik_url":      f"http://{mesh_ip}:8080" if mesh_ip else "",
+        "deploy_errors":    config.get("deploy_errors", []),
     })
 
 

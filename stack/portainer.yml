@@ -1,0 +1,56 @@
+# stack/portainer.yml — Portainer CE + agent for Docker Swarm
+#
+# Deploy with:  docker stack deploy --compose-file portainer.yml portainer
+#
+# Two services:
+#   agent     — runs on EVERY node (global mode), exposes the local Docker
+#               socket to the Portainer server over the encrypted agent_network.
+#   portainer — runs on the manager, connects to agents, serves the web GUI
+#               on port 9000.
+#
+# After deploy: http://<mesh-ip>:9000
+# First visit prompts you to create an admin account; do this within 5 minutes
+# or Portainer locks itself for security.
+
+services:
+  agent:
+    image: portainer/agent:lts
+    volumes:
+      # Agent reads the local Docker socket and volume list
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    networks:
+      - agent_network
+    deploy:
+      mode: global                        # one agent per node, always
+      placement:
+        constraints:
+          - node.platform.os == linux
+
+  portainer:
+    image: portainer/portainer-ce:lts
+    # Connect to agents by DNS name (tasks.agent resolves to all agent IPs)
+    command: -H tcp://tasks.agent:9001 --tlsskipverify
+    ports:
+      - "9000:9000"   # web GUI
+      - "8000:8000"   # Edge agent tunnel (optional, safe to expose)
+    volumes:
+      - portainer_data:/data
+    networks:
+      - agent_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager          # GUI only needs to run on the manager
+
+networks:
+  agent_network:
+    driver: overlay
+    attachable: true
+
+volumes:
+  portainer_data:
+    # Named volume: persists Portainer config (users, stacks, settings)
+    # across container restarts. Stored on the manager node's disk.

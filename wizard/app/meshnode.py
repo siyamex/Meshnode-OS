@@ -19,6 +19,7 @@ import yaml
 CONFIG_DIR     = Path("/etc/meshnode")
 CONFIG_FILE    = CONFIG_DIR / "config.yaml"
 FIRSTBOOT_DONE = CONFIG_DIR / ".firstboot-done"
+STACKS_DIR     = Path("/opt/meshnode-stacks")
 
 
 # ── Config helpers ─────────────────────────────────────────────────────────────
@@ -231,6 +232,42 @@ def generate_join_code(worker_token: str, manager_ip: str) -> str:
     """
     payload = json.dumps({"token": worker_token, "ip": manager_ip})
     return base64.urlsafe_b64encode(payload.encode()).decode().rstrip("=")
+
+
+def deploy_stack(name: str, compose_file: Path) -> tuple[bool, str]:
+    """
+    Deploy (or update) a Docker Swarm stack from a Compose file.
+    Returns (success, message). Idempotent: re-running updates the stack.
+    """
+    if not compose_file.exists():
+        return False, f"Compose file not found: {compose_file}"
+    result = subprocess.run(
+        ["docker", "stack", "deploy",
+         "--compose-file", str(compose_file),
+         name],
+        capture_output=True, text=True,
+    )
+    if result.returncode != 0:
+        return False, result.stderr.strip()
+    return True, result.stdout.strip()
+
+
+def get_stack_services(stack_name: str) -> list[dict]:
+    """
+    Return a list of service status dicts for a deployed stack.
+    Each dict has keys: name, replicas, image.
+    """
+    result = subprocess.run(
+        ["docker", "stack", "services", stack_name,
+         "--format", "{{.Name}}\t{{.Replicas}}\t{{.Image}}"],
+        capture_output=True, text=True,
+    )
+    services = []
+    for line in result.stdout.splitlines():
+        parts = line.split("\t")
+        if len(parts) == 3:
+            services.append({"name": parts[0], "replicas": parts[1], "image": parts[2]})
+    return services
 
 
 def parse_join_code(join_code: str) -> Optional[tuple[str, str]]:

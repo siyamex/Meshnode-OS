@@ -1,18 +1,50 @@
 {% extends "base.html" %}
 {% block content %}
 {% if role == "manager" %}
-{# ── Manager: show the join code for worker nodes ──────────────────────────── #}
+{# ── Manager: cluster created, stacks deployed ────────────────────────────── #}
 <div class="success-icon">🎉</div>
-<h2>Cluster created!</h2>
+<h2>Cluster ready!</h2>
 <p class="hint">
-    <strong>{{ hostname }}</strong> is now the Swarm manager.
-    Copy the join code below and paste it into the setup wizard on each
-    additional node (Step 5 → Join existing cluster).
+    <strong>{{ hostname }}</strong> is the Swarm manager. Portainer and Traefik
+    are being pulled and started — this takes about 1–2 minutes on first run.
 </p>
 
-<div class="field">
-    <label>Join code — paste this on every other node</label>
-    <textarea class="join-code-box" readonly
+{% if deploy_errors %}
+<div class="error">
+    <strong>Stack deployment warnings</strong> (stacks can be redeployed manually):<br>
+    {% for e in deploy_errors %}• {{ e }}<br>{% endfor %}
+    Run <code>docker stack deploy --compose-file /opt/meshnode-stacks/portainer.yml portainer</code>
+    to retry.
+</div>
+{% endif %}
+
+{# ── Service URLs ─────────────────────────────────────────────────────────── #}
+<div class="url-card">
+    <div class="url-card__label">Portainer web GUI</div>
+    <a class="url-card__link" href="{{ portainer_url }}" target="_blank" rel="noopener">
+        {{ portainer_url }}
+    </a>
+    <div class="url-card__note">
+        Create your admin account within 5 minutes or Portainer locks itself.
+    </div>
+</div>
+
+<div class="url-card">
+    <div class="url-card__label">Traefik dashboard</div>
+    <a class="url-card__link" href="{{ traefik_url }}" target="_blank" rel="noopener">
+        {{ traefik_url }}
+    </a>
+    <div class="url-card__note">
+        Shows live routing rules and service health. Keep port 8080 firewalled
+        on public networks.
+    </div>
+</div>
+
+{# ── Join code for worker nodes ───────────────────────────────────────────── #}
+<div class="field field--top">
+    <label for="join_code_display">Join code — paste this on every additional node</label>
+    <textarea id="join_code_display" class="join-code-box" readonly
+              title="Join code for worker nodes"
               onclick="this.select()">{{ join_code }}</textarea>
     <p class="form-note">Click the box to select all, then copy.</p>
 </div>
@@ -26,22 +58,14 @@
     <div class="value">meshnet (created)</div>
 </div>
 
-<p class="hint next-hint">
-    <strong>What's next?</strong><br>
-    Phase 4 will auto-deploy <strong>Portainer</strong> (web GUI) and
-    <strong>Traefik</strong> (edge router) to the Swarm. Run
-    <code>make iso</code> and boot the updated image, or proceed directly
-    to Phase 4 if you are building incrementally.
-</p>
-
 {% else %}
-{# ── Worker: joined successfully ──────────────────────────────────────────── #}
+{# ── Worker: joined the cluster ───────────────────────────────────────────── #}
 <div class="success-icon">✅</div>
 <h2>Joined the cluster!</h2>
 <p class="hint">
-    <strong>{{ hostname }}</strong> is now a Swarm worker.
-    Run <code>docker node ls</code> on the manager node to confirm it appears
-    as <strong>Ready</strong>.
+    <strong>{{ hostname }}</strong> is now a Swarm worker. Check Portainer on
+    the manager node — this node should appear in the cluster view within
+    a few seconds.
 </p>
 
 <div class="status-box">
@@ -58,10 +82,9 @@
 </div>
 
 <p class="hint next-hint">
-    <strong>What's next?</strong><br>
-    Go back to the manager node's Portainer GUI to see this node listed
-    in the cluster. Services deployed on the Swarm will be scheduled here
-    automatically.
+    <strong>Verify on the manager:</strong><br>
+    <code>docker node ls</code> — both nodes should show <strong>Ready</strong>.<br>
+    Then open Portainer on the manager and deploy your app.
 </p>
 {% endif %}
 {% endblock %}
