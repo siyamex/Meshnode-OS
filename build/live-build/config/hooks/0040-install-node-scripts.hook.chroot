@@ -1,0 +1,29 @@
+#!/bin/bash
+# 0040-install-node-scripts.hook.chroot
+#
+# Installs meshnode runtime scripts from /opt/meshnode-node/ (populated by
+# the Makefile rsync of node/ before lb build) into /usr/local/bin/ so they
+# are on PATH and callable without a full path.
+#
+# This script is idempotent: safe to run twice.
+
+set -euo pipefail
+
+SRC_DIR="/opt/meshnode-node"
+
+echo ">> [Phase 5] Installing meshnode node scripts..."
+
+if [ ! -d "${SRC_DIR}" ]; then
+    echo "!! ${SRC_DIR} not found — skipping. (Run 'make iso' to populate it.)"
+    exit 0
+fi
+
+# Install each .sh script as an executable command, stripping the .sh suffix
+for script in "${SRC_DIR}"/*.sh; do
+    [ -f "${script}" ] || continue
+    name=$(basename "${script}" .sh)
+    install -m 755 "${script}" "/usr/local/bin/${name}"
+    echo "   installed: /usr/local/bin/${name}"
+done
+
+echo ">> [Phase 5] Node scripts installed."

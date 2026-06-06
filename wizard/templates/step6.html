@@ -58,6 +58,16 @@
     <div class="value">meshnet (created)</div>
 </div>
 
+<div class="next-steps">
+    <div class="next-steps__title">What to do next</div>
+    <ol class="next-steps__list">
+        <li>Open <a href="{{ portainer_url }}" target="_blank" rel="noopener">Portainer</a> and create your admin account (5-minute window).</li>
+        <li>Boot a second node, run this wizard, choose <em>Join existing cluster</em> and paste the join code above.</li>
+        <li>Deploy the sample website and run the failover test:<br>
+            <code>sudo deploy-website</code></li>
+    </ol>
+</div>
+
 {% else %}
 {# ── Worker: joined the cluster ───────────────────────────────────────────── #}
 <div class="success-icon">✅</div>

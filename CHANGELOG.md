@@ -5,6 +5,33 @@ Format: `## [version] — YYYY-MM-DD` with sections Added / Changed / Fixed.
 
 ---
 
+## [0.1.0-phase5] — 2026-06-04
+
+### Added
+- `stack/website-example.yml` — `traefik/whoami` service, `replicas: 2`,
+  `max_replicas_per_node: 1`, Traefik health-check labels (10 s interval,
+  3 s timeout). Proves failover: each response shows the serving container's
+  hostname so it's immediately obvious when traffic shifts.
+- `node/deploy-website.sh` — idempotent deploy script; validates swarm state
+  and manager role before deploying; baked into the image as
+  `/usr/local/bin/deploy-website` via hook 0040.
+- `build/live-build/config/hooks/0040-install-node-scripts.hook.chroot` —
+  installs all `node/*.sh` scripts into `/usr/local/bin/` (strips `.sh` suffix).
+- `docs/failover-test.md` — step-by-step failover walkthrough: deploy website,
+  confirm 2/2 replicas, kill node-1, confirm site still loads from node-2,
+  restore and watch Swarm rebalance. Explains the expected `1/2` replica count
+  during single-node failure.
+
+### Changed
+- `Makefile`: `make iso` now rsyncs `node/` into
+  `config/includes.chroot/opt/meshnode-node/`.
+- `wizard/templates/step6.html` (manager): replaced placeholder next-steps hint
+  with a structured checklist including the `sudo deploy-website` command.
+- `wizard/static/style.css`: added `.next-steps`, `.next-steps__title`,
+  `.next-steps__list`.
+
+---
+
 ## [0.1.0-phase4] — 2026-06-04
 
 ### Added

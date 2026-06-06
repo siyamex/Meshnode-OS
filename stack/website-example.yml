@@ -1,0 +1,60 @@
+# stack/website-example.yml — sample website for Phase 5 failover demo
+#
+# Deploy with:
+#   docker stack deploy --compose-file website-example.yml website
+#
+# Uses traefik/whoami — a tiny Go service that returns the container's
+# hostname, IP, and request headers in plain text. Perfect for proving
+# failover because every response shows WHICH replica served it.
+#
+# Replica strategy:
+#   replicas: 2            — one copy per node in a 2-node cluster
+#   max_replicas_per_node: 1  — Swarm never puts two copies on one node,
+#                               ensuring real cross-node redundancy
+#
+# Traefik routing:
+#   Traefik picks this up via the deploy.labels below, routes HTTP on
+#   port 80 to the healthy replicas, and health-checks every 10 s.
+#   When a replica dies, Traefik stops sending it traffic within one
+#   health-check interval.
+#
+# Prerequisites: meshnet overlay and Traefik stack must already be running
+# (both are deployed by the wizard in Phase 4).
+
+services:
+  website:
+    image: traefik/whoami
+    networks:
+      - meshnet
+    deploy:
+      replicas: 2
+      placement:
+        max_replicas_per_node: 1        # one replica per node — real redundancy
+      update_config:
+        parallelism: 1                  # roll updates one replica at a time
+        delay: 10s
+        failure_action: rollback
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      labels:
+        # Tell Traefik to route to this service
+        - "traefik.enable=true"
+
+        # Route: any request on port 80 (entrypoint 'web') goes here
+        - "traefik.http.routers.website.rule=PathPrefix(`/`)"
+        - "traefik.http.routers.website.entrypoints=web"
+
+        # Port inside the container that serves traffic
+        - "traefik.http.services.website.loadbalancer.server.port=80"
+
+        # Health check — Traefik probes GET / every 10 s; removes a backend
+        # after 3 consecutive failures (~30 s worst-case failover time)
+        - "traefik.http.services.website.loadbalancer.healthcheck.path=/"
+        - "traefik.http.services.website.loadbalancer.healthcheck.interval=10s"
+        - "traefik.http.services.website.loadbalancer.healthcheck.timeout=3s"
+
+networks:
+  meshnet:
+    external: true                      # created by the wizard (Phase 3)

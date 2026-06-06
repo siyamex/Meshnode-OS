@@ -28,6 +28,10 @@ iso:
 	# The wizard deploys these stacks during cluster creation (Phase 4).
 	mkdir -p $(LB_DIR)/config/includes.chroot/opt/meshnode-stacks
 	rsync -a --delete stack/ $(LB_DIR)/config/includes.chroot/opt/meshnode-stacks/
+	# Sync runtime node scripts into /opt/meshnode-node/ on the live image.
+	# Hook 0040 installs them into /usr/local/bin/ during build.
+	mkdir -p $(LB_DIR)/config/includes.chroot/opt/meshnode-node
+	rsync -a --delete node/ $(LB_DIR)/config/includes.chroot/opt/meshnode-node/
 	# Wipe any previous partial build so lb build starts clean.
 	# '|| true' prevents failure when there is nothing to clean yet.
 	cd $(LB_DIR) && sudo lb clean 2>/dev/null || true

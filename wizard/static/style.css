@@ -372,6 +372,35 @@ textarea:focus { border-color: #38bdf8; }
     line-height: 1.45;
 }
 
-/* ── Next-steps hint (step 6) ────────────────────────────────────────────── */
+/* ── Next-steps checklist (step 6) ──────────────────────────────────────── */
 
 .next-hint { margin-top: 1.5rem; }
+
+.next-steps {
+    margin-top: 1.5rem;
+    background: #0f172a;
+    border: 1px solid #1e3a5f;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+}
+
+.next-steps__title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #475569;
+    margin-bottom: 0.75rem;
+}
+
+.next-steps__list {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: #94a3b8;
+    font-size: 0.875rem;
+    line-height: 1.6;
+}
+
+.next-steps__list li { margin-bottom: 0.4rem; }
+
+.next-steps__list a { color: #38bdf8; text-decoration: none; }
+.next-steps__list a:hover { text-decoration: underline; }
