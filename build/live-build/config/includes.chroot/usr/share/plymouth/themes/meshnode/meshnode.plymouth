@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=meshnode
+Description=meshnode OS boot splash
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/meshnode
+ScriptFile=/usr/share/plymouth/themes/meshnode/meshnode.script

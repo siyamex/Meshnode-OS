@@ -1,0 +1,48 @@
+#!/bin/bash
+# 0060-configure-branding.hook.chroot
+#
+# Registers and activates the meshnode Plymouth theme, then rebuilds the
+# initramfs so Plymouth is included in the live and installed images.
+#
+# This script is idempotent: safe to run twice.
+
+set -euo pipefail
+
+THEME_DIR="/usr/share/plymouth/themes/meshnode"
+THEME_NAME="meshnode"
+
+echo ">> [Phase 7] Configuring meshnode boot splash..."
+
+# --- 1. Verify the theme files landed ---
+if [ ! -f "${THEME_DIR}/meshnode.plymouth" ]; then
+    echo "!! Plymouth theme files not found at ${THEME_DIR} — skipping."
+    exit 0
+fi
+
+# --- 2. Register the theme with Plymouth's alternatives system ---
+# update-alternatives registers our .plymouth descriptor so Plymouth can
+# find it by name. The priority (200) is higher than the Debian defaults
+# so our theme wins the automatic selection.
+update-alternatives --install \
+    /usr/share/plymouth/themes/default.plymouth \
+    default.plymouth \
+    "${THEME_DIR}/meshnode.plymouth" \
+    200
+
+# --- 3. Set the default theme ---
+# plymouth-set-default-theme also updates /etc/alternatives/default.plymouth
+# and marks the theme as active in /etc/plymouth/plymouthd.conf.
+plymouth-set-default-theme "${THEME_NAME}" || {
+    echo "!! plymouth-set-default-theme failed; falling back to 'spinner'"
+    plymouth-set-default-theme spinner 2>/dev/null || true
+}
+
+echo "   Active theme: $(plymouth-get-default-theme 2>/dev/null || echo unknown)"
+
+# --- 4. Rebuild the initramfs ---
+# Plymouth must be baked into the initramfs to display during the very early
+# boot phase (before the root filesystem is mounted).
+# -u = update existing, -k all = all installed kernels
+update-initramfs -u -k all
+
+echo ">> [Phase 7] Boot splash configured."

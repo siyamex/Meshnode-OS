@@ -24,6 +24,10 @@ sudo
 vim
 htop
 
+# ── Phase 7: Plymouth boot splash ────────────────────────────────────────────
+plymouth
+plymouth-themes
+
 # ── Phase 6: Calamares graphical disk installer ───────────────────────────────
 # Calamares framework + Qt runtime
 calamares

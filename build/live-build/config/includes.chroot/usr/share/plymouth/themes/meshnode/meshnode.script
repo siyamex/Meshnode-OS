@@ -1,0 +1,44 @@
+// meshnode.script — Plymouth boot splash for meshnode OS
+//
+// Dark navy background (#0f172a) with brand-cyan title text (#38bdf8).
+// No external image files required — pure script theme.
+//
+// Plymouth RGB values are 0.0–1.0 floats.
+// #0f172a → (0.059, 0.090, 0.165)
+// #38bdf8 → (0.220, 0.749, 0.973)
+// #94a3b8 → (0.580, 0.639, 0.722)
+
+Window.SetBackgroundTopColor(0.059, 0.090, 0.165);
+Window.SetBackgroundBottomColor(0.059, 0.090, 0.165);
+
+// ── Title ─────────────────────────────────────────────────────────────────────
+title_image   = Image.Text("meshnode OS", 0.220, 0.749, 0.973);
+title_sprite  = Sprite(title_image);
+title_sprite.SetX(Window.GetWidth()  / 2 - title_image.GetWidth()  / 2);
+title_sprite.SetY(Window.GetHeight() / 2 - title_image.GetHeight() - 24);
+title_sprite.SetOpacity(1);
+
+// ── Subtitle / status line ────────────────────────────────────────────────────
+sub_image  = Image.Text("starting up...", 0.580, 0.639, 0.722);
+sub_sprite = Sprite(sub_image);
+sub_sprite.SetX(Window.GetWidth()  / 2 - sub_image.GetWidth()  / 2);
+sub_sprite.SetY(Window.GetHeight() / 2 + 8);
+
+// ── Boot message callback — replaces "starting up..." with actual messages ───
+fun message_callback(text) {
+    local.new_image;
+    new_image = Image.Text(text, 0.580, 0.639, 0.722);
+    sub_sprite.SetImage(new_image);
+    sub_sprite.SetX(Window.GetWidth() / 2 - new_image.GetWidth() / 2);
+}
+Plymouth.SetMessageFunction(message_callback);
+
+// ── Password dialog callback (for encrypted disks) ────────────────────────────
+fun display_password_callback(prompt, dots) {
+    local.prompt_image;
+    prompt_image = Image.Text(prompt + " [" + String(dots) + "]",
+                              0.220, 0.749, 0.973);
+    sub_sprite.SetImage(prompt_image);
+    sub_sprite.SetX(Window.GetWidth() / 2 - prompt_image.GetWidth() / 2);
+}
+Plymouth.SetDisplayPasswordFunction(display_password_callback);

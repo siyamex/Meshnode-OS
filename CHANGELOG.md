@@ -5,6 +5,35 @@ Format: `## [version] — YYYY-MM-DD` with sections Added / Changed / Fixed.
 
 ---
 
+## [0.1.0] — 2026-06-06  ← v1 release
+
+### Added
+- `build/live-build/config/includes.chroot/usr/share/plymouth/themes/meshnode/`
+  — custom Plymouth script theme: dark navy background (#0f172a), brand-cyan
+  title text (#38bdf8), boot-message callback, password-dialog callback.
+- `build/live-build/config/hooks/0060-configure-branding.hook.chroot` —
+  registers Plymouth theme via `update-alternatives`, sets it as default,
+  rebuilds initramfs.
+- `wizard/static/favicon.svg` — dark "M" SVG icon in brand colours; referenced
+  from `base.html` as `<link rel="icon">`.
+- `docs/architecture.md` — full architecture doc: component roles, data-flow
+  diagram for cluster join, network port table, per-node config-file layout.
+- `docs/troubleshooting.md` — filled-in troubleshooting guide covering wizard,
+  ZeroTier, Docker Swarm, Traefik, Portainer, Calamares, and Plymouth.
+
+### Changed
+- `build/live-build/auto/config` — added `--bootappend-live` with
+  `quiet splash plymouth.ignore-serial-consoles` so Plymouth runs during live boot.
+- `build/live-build/config/package-lists/meshnode.list.chroot` — added
+  `plymouth`, `plymouth-themes`.
+- `Makefile` — added `make tag` and `make release` targets; `make release`
+  builds the ISO then creates the git tag.
+- `README.md` — complete rewrite: architecture diagram, user journey table,
+  technology table, build-phase status, docs links, stretch goals.
+- `wizard/templates/base.html` — added favicon `<link>` tag.
+
+---
+
 ## [0.1.0-phase6] — 2026-06-06
 
 ### Added

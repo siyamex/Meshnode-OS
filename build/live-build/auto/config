@@ -23,4 +23,5 @@ lb config noauto \
     --apt-indices       false        \
     --apt-recommends    false        \
     --memtest           none         \
+    --bootappend-live   "boot=live components quiet splash plymouth.ignore-serial-consoles" \
     "${@}"

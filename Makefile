@@ -10,7 +10,7 @@ ISO_OUT := meshnode-os-$(VERSION).iso
 # live-build names its output file predictably
 LB_ISO  := $(LB_DIR)/live-image-amd64.hybrid.iso
 
-.PHONY: iso test clean help
+.PHONY: iso test clean release tag help
 
 ## Build the meshnode OS ISO (must run on Debian/Ubuntu or WSL2 — see docs/install.md)
 iso:
@@ -74,6 +74,17 @@ clean:
 	cd $(LB_DIR) && sudo lb clean --purge 2>/dev/null || true
 	rm -f $(ISO_OUT)
 	@echo ">> Clean complete."
+
+## Create a signed git tag and (optionally) a GitHub release for VERSION
+tag:
+	@echo ">> Tagging v$(VERSION)..."
+	git tag -a "v$(VERSION)" -m "meshnode OS v$(VERSION)"
+	@echo ">> Tag created locally. Push with: git push origin v$(VERSION)"
+	@echo ">> Then create the GitHub release and attach $(ISO_OUT)."
+
+## Build ISO + create tag (full release flow)
+release: iso tag
+	@echo ">> Release v$(VERSION) ready: $(ISO_OUT)"
 
 ## Show available targets
 help:
