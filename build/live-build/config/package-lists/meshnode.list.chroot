@@ -36,9 +36,12 @@ xorg
 openbox
 xinit
 xterm
-# Bootloader — GRUB for BIOS, GRUB EFI for UEFI (installed to the target disk)
-grub-pc
-grub-efi-amd64
+# Bootloader — use -bin packages so both BIOS and UEFI binary sets coexist
+# without the grub-pc vs grub-efi-amd64 mutual-exclusion conflict.
+# grub-common provides grub-install; Calamares calls it during disk install.
+grub-common
+grub-pc-bin
+grub-efi-amd64-bin
 efibootmgr
 # Filesystem tools used by the partition + unpackfs modules
 dosfstools
