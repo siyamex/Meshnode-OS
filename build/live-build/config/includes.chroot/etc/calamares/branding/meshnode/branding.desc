@@ -1,0 +1,31 @@
+---
+# branding.desc — meshnode OS Calamares branding.
+# Phase 6: functional placeholder. Phase 7 adds proper logos.
+
+componentName: meshnode
+
+strings:
+  productName:         "meshnode OS"
+  shortProductName:    "meshnode"
+  version:             "0.1.0"
+  versionedName:       "meshnode OS 0.1.0"
+  bootloaderEntryName: "meshnode"
+  productUrl:          "https://github.com/siyamex/Meshnode-OS"
+  supportUrl:          "https://github.com/siyamex/Meshnode-OS/issues"
+  knownIssuesUrl:      "https://github.com/siyamex/Meshnode-OS/issues"
+  releaseNotesUrl:     ""
+
+# No custom images for Phase 6; Phase 7 adds logo.png
+images:
+  productLogo:    ""
+  productIcon:    ""
+  productWelcome: ""
+
+slideshow: "show.qml"
+
+style:
+  sidebarBackground:    "#0f172a"
+  sidebarText:          "#e2e8f0"
+  sidebarTextSelect:    "#0f172a"
+  sidebarTextHighlight: "#38bdf8"
+  sidebarVersion:       "#64748b"

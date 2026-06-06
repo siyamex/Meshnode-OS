@@ -1,8 +1,10 @@
 
   meshnode OS v0.1
   ─────────────────────────────────────────────
-  Setup wizard:  http://\4{eth0}:8088
-  (if \4{eth0} is blank, try \4{ens3} or \4{enp1s0})
+  Setup wizard:   http://\4{eth0}:8088
+  (try \4{ens3} or \4{enp1s0} if the IP above is blank)
+
+  Install to disk: sudo start-installer  (then Ctrl+Alt+F7)
   ─────────────────────────────────────────────
   Login:  user / live   (or root, no password)
 

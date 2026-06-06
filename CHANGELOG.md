@@ -5,6 +5,43 @@ Format: `## [version] — YYYY-MM-DD` with sections Added / Changed / Fixed.
 
 ---
 
+## [0.1.0-phase6] — 2026-06-06
+
+### Added
+- `build/live-build/config/includes.chroot/etc/calamares/settings.conf` —
+  Calamares module sequence: welcome → locale → keyboard → partition → users →
+  summary (show), then partition → mount → unpackfs → machineid → fstab →
+  locale → keyboard → localecfg → users → networkcfg → hwclock →
+  services-systemd → shellprocess → bootloader → grubcfg → umount (exec).
+- `etc/calamares/modules/unpackfs.conf` — copies
+  `/run/live/medium/live/filesystem.squashfs` to the target disk.
+- `etc/calamares/modules/shellprocess.conf` — runs in target chroot:
+  removes `.firstboot-done` and re-enables `meshnode-wizard.service` so the
+  wizard runs exactly once on first boot after install.
+- `etc/calamares/modules/services-systemd.conf` — enables docker, zerotier-one,
+  meshnode-wizard, and ssh on the installed system.
+- `etc/calamares/modules/users.conf` — user creation with docker + sudo groups.
+- `etc/calamares/modules/bootloader.conf` — GRUB for BIOS and UEFI with fallback.
+- `etc/calamares/modules/finished.conf` — reboot option on completion.
+- `etc/calamares/branding/meshnode/branding.desc` — meshnode product name,
+  dark sidebar colours matching wizard CSS.
+- `etc/calamares/branding/meshnode/show.qml` — minimal installation slideshow.
+- `build/live-build/config/includes.chroot/root/.xinitrc` — X session: openbox
+  + calamares; used by start-installer.
+- `node/start-installer.sh` → `/usr/local/bin/start-installer` — launches X
+  on display :1 / TTY7 with Calamares; checks for root, pre-existing process.
+- `build/live-build/config/hooks/0050-configure-installer.hook.chroot` —
+  chmod +x on .xinitrc, verifies Calamares config presence.
+
+### Changed
+- `build/live-build/config/package-lists/meshnode.list.chroot` — added
+  `calamares`, `xorg`, `openbox`, `xinit`, `xterm`, `grub-pc`,
+  `grub-efi-amd64`, `efibootmgr`, `dosfstools`, `squashfs-tools`, `parted`.
+- `build/live-build/config/includes.chroot/etc/issue` — added
+  `sudo start-installer` instruction below the wizard URL.
+
+---
+
 ## [0.1.0-phase5] — 2026-06-04
 
 ### Added

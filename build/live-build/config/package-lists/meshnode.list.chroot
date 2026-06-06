@@ -23,3 +23,20 @@ sudo
 # Basic editors / diagnostics
 vim
 htop
+
+# ── Phase 6: Calamares graphical disk installer ───────────────────────────────
+# Calamares framework + Qt runtime
+calamares
+# Minimal X11 stack so Calamares can draw its GUI
+xorg
+openbox
+xinit
+xterm
+# Bootloader — GRUB for BIOS, GRUB EFI for UEFI (installed to the target disk)
+grub-pc
+grub-efi-amd64
+efibootmgr
+# Filesystem tools used by the partition + unpackfs modules
+dosfstools
+squashfs-tools
+parted

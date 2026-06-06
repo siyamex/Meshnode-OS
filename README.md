@@ -30,7 +30,8 @@ make test         # boot it in QEMU
 | 2 | First-boot wizard | ✅ Done |
 | 3 | Cluster formation | ✅ Done |
 | 4 | Auto-deploy Portainer + Traefik | ✅ Done |
-| 5 | Sample app + failover proof | ✅ In progress |
+| 5 | Sample app + failover proof | ✅ Done |
+| 6 | Calamares disk installer | ✅ In progress |
 | 3 | Cluster formation | Pending |
 | 4 | Auto-deploy Portainer + Traefik | Pending |
 | 5 | Sample app + failover proof | Pending |

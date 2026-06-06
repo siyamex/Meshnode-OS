@@ -1,0 +1,35 @@
+#!/bin/bash
+# 0050-configure-installer.hook.chroot
+#
+# Final Calamares setup steps that must happen inside the live chroot:
+#   1. Make /root/.xinitrc executable (the bit is lost from Windows edits).
+#   2. Ensure Calamares can find its settings file.
+#
+# This script is idempotent: safe to run twice.
+
+set -euo pipefail
+
+echo ">> [Phase 6] Configuring Calamares installer..."
+
+# --- 1. Make xinitrc executable ---
+# startx requires the xinitrc to have the executable bit set.
+if [ -f /root/.xinitrc ]; then
+    chmod +x /root/.xinitrc
+    echo "   chmod +x /root/.xinitrc"
+fi
+
+# --- 2. Verify Calamares can see its config ---
+if [ ! -f /etc/calamares/settings.conf ]; then
+    echo "!! /etc/calamares/settings.conf not found — installer will not work." >&2
+else
+    echo "   /etc/calamares/settings.conf present."
+fi
+
+# --- 3. Ensure the branding directory is readable ---
+BRANDING_DIR="/etc/calamares/branding/meshnode"
+if [ -d "${BRANDING_DIR}" ]; then
+    chmod -R a+rX "${BRANDING_DIR}"
+    echo "   branding directory permissions set."
+fi
+
+echo ">> [Phase 6] Installer configured."
